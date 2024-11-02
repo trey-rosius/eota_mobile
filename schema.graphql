@@ -1,0 +1,217 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Chapter {
+  chapterTitle: String!
+  id: String!
+}
+
+type Chapters {
+  items: [Chapter!]!
+  nextToken: String
+}
+
+type Character {
+  characterBackstory: String!
+  characterName: String!
+  conversation: [Conversation!]
+  id: String!
+  role: CHARACTER_ROLE!
+}
+
+type Characters {
+  items: [Character!]!
+}
+
+type Conversation {
+  chapterId: String!
+  characterId: String!
+  conversationId: String!
+  id: String!
+  message: String!
+}
+
+type ConversationResponse @aws_api_key @aws_iam {
+  chapterId: String
+  characterId: String
+  conversationType: CONVERSATIONTYPE!
+  id: String!
+  imageUrl: String
+  message: String
+  puzzleId: String
+  relicId: String
+}
+
+type Conversations {
+  items: [Conversation!]!
+  nextToken: String
+}
+
+type Mutation {
+  createChapter(input: CreateChapterInput!): Chapter!
+  createCharacter(input: CreateCharacterInput!): Character! @aws_api_key
+  createConversation(input: CreateConversationInput!): Conversation! @aws_api_key
+  createConversationOption(input: CreateOptionInput!): Option! @aws_api_key
+  createConversationPuzzle(input: CreatePuzzleInput!): Puzzle! @aws_api_key
+  createPlayerAccount(input: CreatePlayerInput!): Player! @aws_api_key
+  notifyOptionResponse(input: NotifyOptionResponseInput!): ConversationResponse! @aws_api_key @aws_iam
+  sendOption(input: OptionInput!): Boolean! @aws_api_key
+  updateConversation(input: UpdateConversationInput!): Conversation! @aws_api_key
+  updatePlayerAccount(input: UpdatedPlayerInput!): Player! @aws_api_key
+}
+
+type Option {
+  conversationId: String!
+  id: String!
+  nextConversationId: String!
+  nextStepType: CONVERSATIONTYPE!
+  optionId: String!
+  optionText: String!
+  puzzleId: String
+  relicId: String
+}
+
+type Options {
+  items: [Option!]!
+}
+
+type Player {
+  completedChapterIds: [String!]
+  currentChapterId: String!
+  id: String!
+  solvedPuzzleIds: [String!]
+  unlockedCharacterIds: [String!]
+  unlockedRelicIds: [String!]
+}
+
+type Puzzle {
+  chapterId: String!
+  decryptedMessage: String!
+  encryptedMessage: String!
+  hint: String!
+  id: String!
+  puzzleDescription: String!
+  puzzleId: String!
+  puzzleName: String!
+  puzzleType: PUZZLETYPE!
+}
+
+type Puzzles {
+  items: [Puzzle!]!
+}
+
+type Query {
+  getChapter(chapterId: String!): Chapter!
+  getChapterConversations(chapterId: String!, limit: Int!, nextToken: String): Conversations!
+  getChapters(limit: Int!, nextToken: String): Chapters!
+  getCharacter(characterId: String!): Character!
+  getCharacterConversations(characterId: String!, limit: Int!, nextToken: String): Conversations!
+  getCharacters: Characters!
+  getConversation(conversationId: String): Conversation!
+  getConversationOptions(conversationId: String!): Options!
+  getConversations(limit: Int!, nextToken: String): Conversations!
+  getOption(id: ID): Boolean!
+  getPuzzle(puzzleId: String!): Puzzle!
+  getPuzzles(limit: Int!): Puzzles!
+}
+
+type Subscription {
+  onOptionResponse: ConversationResponse @aws_subscribe(mutations : ["notifyOptionResponse"])
+}
+
+enum CHARACTER_ROLE {
+  GUIDE
+  HISTORIAN_PROFESSOR
+  LIBRARIAN
+  MAYOR
+}
+
+enum CONVERSATIONTYPE {
+  CONVERSATION
+  GENERATIVE_IMAGE
+  PUZZLE
+  RELIC
+}
+
+enum PUZZLETYPE {
+  CYPHER_AND_RIDDLE
+  LOGIC_PUZZLE_AND_PATTERN_RECOGNITION
+}
+
+input CreateChapterInput {
+  chapterTitle: String!
+}
+
+input CreateCharacterInput {
+  characterBackstory: String!
+  characterName: String!
+  role: CHARACTER_ROLE!
+}
+
+input CreateConversationInput {
+  chapterId: String!
+  characterId: String!
+  message: String!
+}
+
+input CreateOptionInput {
+  conversationId: String!
+  nextConversationId: String!
+  nextStepType: CONVERSATIONTYPE!
+  optionText: String!
+  puzzleId: String
+  relicId: String
+}
+
+input CreatePlayerInput {
+  completedChapterIds: [String!]
+  currentChapterId: String!
+  solvedPuzzleIds: [String!]
+  unlockedCharacterIds: [String!]
+  unlockedRelicIds: [String!]
+}
+
+input CreatePuzzleInput {
+  chapterId: String!
+  decryptedMessage: String!
+  encryptedMessage: String!
+  hint: String!
+  puzzleDescription: String!
+  puzzleName: String!
+  puzzleType: PUZZLETYPE!
+}
+
+input NotifyOptionResponseInput {
+  chapterId: String
+  characterId: String
+  conversationType: CONVERSATIONTYPE!
+  id: String!
+  imageUrl: String
+  message: String
+  puzzleId: String
+  relicId: String
+}
+
+input OptionInput {
+  conversationId: String!
+  nextStepType: String!
+}
+
+input UpdateConversationInput {
+  chapterId: String
+  characterId: String
+  id: String!
+  message: String!
+}
+
+input UpdatedPlayerInput {
+  completedChapterIds: [String!]
+  currentChapterId: String!
+  id: String!
+  solvedPuzzleIds: [String!]
+  unlockedCharacterIds: [String!]
+  unlockedRelicIds: [String!]
+}

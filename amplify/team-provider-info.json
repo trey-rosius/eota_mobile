@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-eota-dev-f7beb-authRole",
+      "UnauthRoleArn": "arn:aws:iam::132260253285:role/amplify-eota-dev-f7beb-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::132260253285:role/amplify-eota-dev-f7beb-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-eota-dev-f7beb-deployment",
+      "UnauthRoleName": "amplify-eota-dev-f7beb-unauthRole",
+      "StackName": "amplify-eota-dev-f7beb",
+      "StackId": "arn:aws:cloudformation:us-east-2:132260253285:stack/amplify-eota-dev-f7beb/5feeda10-995a-11ef-b19e-0aa28bcc48e9",
+      "AmplifyAppId": "d2tvbv8yk4yy1"
+    }
+  }
+}
