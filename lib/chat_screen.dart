@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'models/Option.dart';
+
 class Relic {
   final String name;
   final String asset;
@@ -81,6 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
         } else {
           gameRepo.conversationResponse = conversationResponse;
         }
+        gameRepo.getConversationOptions(conversationResponse.id);
         if (kDebugMode) {
           //  print("all list messages are $chatMessagesList");
           print('Subscription event data received: ${event.data}');
@@ -161,6 +164,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
+           gameRepo.options.isEmpty ? SizedBox(): Container(
+             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+             child: Wrap(
+               spacing: 8.0, // gap between adjacent chips
+               runSpacing: 4.0, // gap between lines
+               children:[
+                 for(Option option in gameRepo.options)
+                  OptionWidget(option: option,)
+               ]
+             ),
+
+            )
 
           ],
         ),
@@ -168,3 +183,37 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
+class OptionWidget extends StatefulWidget {
+   const OptionWidget({required this.option});
+  final Option option;
+
+  @override
+  State<OptionWidget> createState() => _OptionWidgetState();
+}
+
+class _OptionWidgetState extends State<OptionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+
+      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+      decoration: BoxDecoration(
+        color:Colors.grey.shade800,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+          bottomLeft:
+          Radius.circular(50) ,
+          bottomRight:
+          Radius.circular(50),
+        ),
+      ),
+      child: Text(
+        widget.option.optionText,
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
+}
+
