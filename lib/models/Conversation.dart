@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'package:collection/collection.dart';
 
 
 /** This is an auto generated class representing the Conversation type in your schema. */
@@ -28,8 +29,10 @@ class Conversation {
   final String? _chapterId;
   final String? _characterId;
   final String? _conversationId;
+  final bool? _hasOptions;
   final String id;
   final String? _message;
+  final List<Option>? _options;
 
   String get chapterId {
     try {
@@ -70,6 +73,19 @@ class Conversation {
     }
   }
   
+  bool get hasOptions {
+    try {
+      return _hasOptions!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
   String get message {
     try {
       return _message!;
@@ -83,15 +99,21 @@ class Conversation {
     }
   }
   
-  const Conversation._internal({required chapterId, required characterId, required conversationId, required this.id, required message}): _chapterId = chapterId, _characterId = characterId, _conversationId = conversationId, _message = message;
+  List<Option>? get options {
+    return _options;
+  }
   
-  factory Conversation({required String chapterId, required String characterId, required String conversationId, String? id, required String message}) {
+  const Conversation._internal({required chapterId, required characterId, required conversationId, required hasOptions, required this.id, required message, options}): _chapterId = chapterId, _characterId = characterId, _conversationId = conversationId, _hasOptions = hasOptions, _message = message, _options = options;
+  
+  factory Conversation({required String chapterId, required String characterId, required String conversationId, required bool hasOptions, String? id, required String message, List<Option>? options}) {
     return Conversation._internal(
       chapterId: chapterId,
       characterId: characterId,
       conversationId: conversationId,
+      hasOptions: hasOptions,
       id: id == null ? amplify_core.UUID.getUUID() : id,
-      message: message);
+      message: message,
+      options: options != null ? List<Option>.unmodifiable(options) : options);
   }
   
   bool equals(Object other) {
@@ -105,8 +127,10 @@ class Conversation {
       _chapterId == other._chapterId &&
       _characterId == other._characterId &&
       _conversationId == other._conversationId &&
+      _hasOptions == other._hasOptions &&
       id == other.id &&
-      _message == other._message;
+      _message == other._message &&
+      DeepCollectionEquality().equals(_options, other._options);
   }
   
   @override
@@ -120,35 +144,43 @@ class Conversation {
     buffer.write("chapterId=" + "$_chapterId" + ", ");
     buffer.write("characterId=" + "$_characterId" + ", ");
     buffer.write("conversationId=" + "$_conversationId" + ", ");
+    buffer.write("hasOptions=" + (_hasOptions != null ? _hasOptions!.toString() : "null") + ", ");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("message=" + "$_message");
+    buffer.write("message=" + "$_message" + ", ");
+    buffer.write("options=" + (_options != null ? _options!.toString() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Conversation copyWith({String? chapterId, String? characterId, String? conversationId, String? id, String? message}) {
+  Conversation copyWith({String? chapterId, String? characterId, String? conversationId, bool? hasOptions, String? id, String? message, List<Option>? options}) {
     return Conversation._internal(
       chapterId: chapterId ?? this.chapterId,
       characterId: characterId ?? this.characterId,
       conversationId: conversationId ?? this.conversationId,
+      hasOptions: hasOptions ?? this.hasOptions,
       id: id ?? this.id,
-      message: message ?? this.message);
+      message: message ?? this.message,
+      options: options ?? this.options);
   }
   
   Conversation copyWithModelFieldValues({
     ModelFieldValue<String>? chapterId,
     ModelFieldValue<String>? characterId,
     ModelFieldValue<String>? conversationId,
+    ModelFieldValue<bool>? hasOptions,
     ModelFieldValue<String>? id,
-    ModelFieldValue<String>? message
+    ModelFieldValue<String>? message,
+    ModelFieldValue<List<Option>>? options
   }) {
     return Conversation._internal(
       chapterId: chapterId == null ? this.chapterId : chapterId.value,
       characterId: characterId == null ? this.characterId : characterId.value,
       conversationId: conversationId == null ? this.conversationId : conversationId.value,
+      hasOptions: hasOptions == null ? this.hasOptions : hasOptions.value,
       id: id == null ? this.id : id.value,
-      message: message == null ? this.message : message.value
+      message: message == null ? this.message : message.value,
+      options: options == null ? this.options : options.value
     );
   }
   
@@ -156,19 +188,28 @@ class Conversation {
     : _chapterId = json['chapterId'],
       _characterId = json['characterId'],
       _conversationId = json['conversationId'],
+      _hasOptions = json['hasOptions'],
       id = json['id'],
-      _message = json['message'];
+      _message = json['message'],
+      _options = json['options'] is List
+        ? (json['options'] as List)
+          .where((e) => e != null)
+          .map((e) => Option.fromJson(new Map<String, dynamic>.from(e['serializedData'] ?? e)))
+          .toList()
+        : null;
   
   Map<String, dynamic> toJson() => {
-    'chapterId': _chapterId, 'characterId': _characterId, 'conversationId': _conversationId, 'id': id, 'message': _message
+    'chapterId': _chapterId, 'characterId': _characterId, 'conversationId': _conversationId, 'hasOptions': _hasOptions, 'id': id, 'message': _message, 'options': _options?.map((Option? e) => e?.toJson()).toList()
   };
   
   Map<String, Object?> toMap() => {
     'chapterId': _chapterId,
     'characterId': _characterId,
     'conversationId': _conversationId,
+    'hasOptions': _hasOptions,
     'id': id,
-    'message': _message
+    'message': _message,
+    'options': _options
   };
 
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
@@ -194,6 +235,12 @@ class Conversation {
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'hasOptions',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.bool)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'id',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
@@ -203,6 +250,13 @@ class Conversation {
       fieldName: 'message',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
+      fieldName: 'options',
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'Option')
     ));
   });
 }

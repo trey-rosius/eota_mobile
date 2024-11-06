@@ -1,8 +1,10 @@
+import 'package:eota/providers/game_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:provider/provider.dart';
 
 import 'chat_screen.dart';
+import 'message_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,10 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
           _controller.value.isInitialized
               ? VideoPlayer(_controller)
               : Container(),
+          /*
           Positioned(
               top: MediaQuery.of(context).size.height / 5,
               child:
-
+/*
               SizedBox(
 
                 child: DefaultTextStyle(
@@ -71,9 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-
+*/
 
           ),
+
+           */
           Positioned(
             top: MediaQuery.of(context).size.height / 1.6,
             child: Stack(
@@ -120,7 +125,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: TextButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context){
-                              return const ChatScreen();
+                              return  MultiProvider(providers: [
+                                  ChangeNotifierProvider(create: (context) => MessageRepository.instance()),
+                              ChangeNotifierProvider(create: (context) => GameplayRepository.instance()),
+                              ],child:ChatScreen());
+
+
+
+
+
                             }));
                           },
                           child: Text("Continue",

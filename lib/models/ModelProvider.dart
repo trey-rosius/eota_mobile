@@ -42,6 +42,7 @@ export 'Characters.dart';
 export 'Conversation.dart';
 export 'ConversationResponse.dart';
 export 'Conversations.dart';
+export 'GAMESTATE.dart';
 export 'Option.dart';
 export 'Options.dart';
 export 'PUZZLETYPE.dart';
@@ -51,7 +52,7 @@ export 'Puzzles.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "cc579212bda57ed9be7b05d66bd7308e";
+  String version = "5bb8282f2e5d7a5019a45c6ddd4866ec";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [];
   @override

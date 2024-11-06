@@ -30,8 +30,10 @@ type Conversation {
   chapterId: String!
   characterId: String!
   conversationId: String!
+  hasOptions: Boolean!
   id: String!
   message: String!
+  options: [Option!]
 }
 
 type ConversationResponse @aws_api_key @aws_iam {
@@ -57,7 +59,7 @@ type Mutation {
   createConversationOption(input: CreateOptionInput!): Option! @aws_api_key
   createConversationPuzzle(input: CreatePuzzleInput!): Puzzle! @aws_api_key
   createPlayerAccount(input: CreatePlayerInput!): Player! @aws_api_key
-  notifyOptionResponse(input: NotifyOptionResponseInput!): ConversationResponse! @aws_api_key @aws_iam
+  notifyConversationResponse(input: ConversationResponseInput!): ConversationResponse! @aws_api_key @aws_iam
   sendOption(input: OptionInput!): Boolean! @aws_api_key
   updateConversation(input: UpdateConversationInput!): Conversation! @aws_api_key
   updatePlayerAccount(input: UpdatedPlayerInput!): Player! @aws_api_key
@@ -119,7 +121,7 @@ type Query {
 }
 
 type Subscription {
-  onOptionResponse: ConversationResponse @aws_subscribe(mutations : ["notifyOptionResponse"])
+  onNotifyConversationResponse: ConversationResponse @aws_api_key @aws_subscribe(mutations : ["notifyConversationResponse"])
 }
 
 enum CHARACTER_ROLE {
@@ -136,9 +138,25 @@ enum CONVERSATIONTYPE {
   RELIC
 }
 
+enum GAMESTATE {
+  CONTINUE
+  NEW
+}
+
 enum PUZZLETYPE {
   CYPHER_AND_RIDDLE
   LOGIC_PUZZLE_AND_PATTERN_RECOGNITION
+}
+
+input ConversationResponseInput @aws_api_key {
+  chapterId: String
+  characterId: String
+  conversationType: CONVERSATIONTYPE!
+  id: String!
+  imageUrl: String
+  message: String
+  puzzleId: String
+  relicId: String
 }
 
 input CreateChapterInput {
@@ -184,20 +202,11 @@ input CreatePuzzleInput {
   puzzleType: PUZZLETYPE!
 }
 
-input NotifyOptionResponseInput {
-  chapterId: String
-  characterId: String
-  conversationType: CONVERSATIONTYPE!
-  id: String!
-  imageUrl: String
-  message: String
-  puzzleId: String
-  relicId: String
-}
-
 input OptionInput {
-  conversationId: String!
+  conversationId: String
+  gameState: GAMESTATE!
   nextStepType: String!
+  optionId: String
 }
 
 input UpdateConversationInput {

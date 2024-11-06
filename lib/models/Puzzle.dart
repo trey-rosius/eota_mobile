@@ -125,7 +125,7 @@ class Puzzle {
           );
     }
   }
-  
+
   PUZZLETYPE get puzzleType {
     try {
       return _puzzleType!;

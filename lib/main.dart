@@ -10,7 +10,9 @@ import 'amplifyconfiguration.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:provider/provider.dart';
 
+import 'chat_screen.dart';
 import 'home_screen.dart';
+import 'message_repository.dart';
 
 
 final AmplifyLogger _logger = AmplifyLogger('EOTA');
@@ -37,6 +39,7 @@ class _MyAppState extends State<App> {
     try {
       await Amplify.addPlugins([
         AmplifyAPI(),
+        /*
         AmplifyAuthCognito(
 
           secureStorageFactory: AmplifySecureStorage.factoryFrom(
@@ -45,6 +48,8 @@ class _MyAppState extends State<App> {
             MacOSSecureStorageOptions(useDataProtection: false),
           ),
         ),
+
+         */
 
       ]);
 
@@ -89,7 +94,12 @@ class _MyAppState extends State<App> {
             path: '/',
             builder: (BuildContext context, GoRouterState state) =>
             _isConfigured
-                ? HomeScreen()
+                ?  ChangeNotifierProvider(create: (context) => MessageRepository.instance(),
+             // child: ChatScreen(),
+              child: HomeScreen(),
+            )
+
+
                 : const Scaffold(
                 body:Center(
                   child: CircularProgressIndicator(),

@@ -1,17 +1,29 @@
+import 'package:eota/home_screen.dart';
+import 'package:eota/message_repository.dart';
+import 'package:eota/models/ConversationResponse.dart';
+import 'package:eota/providers/game_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:pretty_animated_text/pretty_animated_text.dart';
+import 'package:provider/provider.dart';
+import 'message.dart';
+import 'message_bubble.dart';
+
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 
-class Message {
-  final String text;
-  final bool isPlayer;
+import 'package:provider/provider.dart';
 
-  Message({required this.text, required this.isPlayer});
-}
-
-class Relic{
+class Relic {
   final String name;
   final String asset;
 
-  Relic({required this.name,required this.asset});
+  Relic({required this.name, required this.asset});
 }
 
 class ChatScreen extends StatefulWidget {
@@ -21,68 +33,102 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-List<Relic> relics = [
-  Relic(name: 'Obsidian Heart', asset: "assets/images/obsidian.jpg"),
-  Relic(name: 'Celestial Compass', asset: "assets/images/celestial_compass.jpg"),
-  Relic(name: 'Whispering Quill', asset: "assets/images/whisperer_quill.jpg"),
-  Relic(name: 'Veil of Shadows', asset: "assets/images/veil_shadows.jpg"),
-  Relic(name: 'Ankh of Transcendence', asset: "assets/images/ankh_of_transcendence.jpg"),
-];
-
-List<Message> messages = [
-  Message(
-    text: 'If you\'re seeking the truth behind the unexplained, Ravenswood holds secrets begging to be uncovered. Your skills are needed here.',
-    isPlayer: false,
-  ),
-  // Initial NPC message
-];
-
-
 class _ChatScreenState extends State<ChatScreen> {
+  late final Stream<GraphQLResponse<String>> onNotifyConversationResponseStream;
+  Future<void> subscribeToOnNotifyStateResponse(
+      GameplayRepository gameRepo) async {
+    String graphQLDocument = '''
+    subscription onNotifyConversationResponse{
+  onNotifyConversationResponse {
+    id
+    conversationType
+    imageUrl
+    message
+    puzzleId
+    relicId
+    characterId
+    chapterId
+  }
+  
+}
+ 
 
+''';
 
-  List<String> responseOptions = [
-    'Who is this? How did you get my number?',
-    'What kind of secrets?',
-    'I\'m on my way.',
-  ];
+    onNotifyConversationResponseStream = Amplify.API.subscribe(
+      GraphQLRequest<String>(
+        document: graphQLDocument,
+        apiName: "EOTA-api_API_KEY",
+      ),
+      onEstablished: () => print('Subscription established'),
+    );
 
-  void addMessage(String text, bool isPlayer) {
-    setState(() {
-      messages.add(Message(text: text, isPlayer: isPlayer));
-    });
+    try {
+      await for (var event in onNotifyConversationResponseStream) {
+        print("notify Conversation stream $event");
+        Map jsonComment = json.decode(event.data!);
+        ConversationResponse conversationResponse =
+            ConversationResponse.fromJson(
+                jsonComment['onNotifyConversationResponse']);
+
+        if (kDebugMode) {
+          print("event message data is ${event.data}");
+        }
+        if (gameRepo.conversationResponses.isNotEmpty) {
+          if (gameRepo.conversationResponses[0].id != conversationResponse.id) {
+            gameRepo.conversationResponse = conversationResponse;
+          }
+        } else {
+          gameRepo.conversationResponse = conversationResponse;
+        }
+        if (kDebugMode) {
+          //  print("all list messages are $chatMessagesList");
+          print('Subscription event data received: ${event.data}');
+        }
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('Error in subscription stream: $e');
+      }
+    }
   }
 
-  void handleResponse(String response) {
-    addMessage(response, true);
+  @override
+  void initState() {
+    var gameRepo = context.read<GameplayRepository>();
 
-    // NPC replies based on the player's response
-    String npcReply = '';
-    if (response == 'What kind of secrets?') {
-      npcReply = 'Strange occurrences that defy explanation. Come to Ravenswood and see for yourself.';
-    } else if (response == 'I\'m on my way.') {
-      npcReply = 'We await your arrival. Be cautious.';
-    } else {
-      npcReply = 'All will be revealed in time.';
-    }
-
-    Future.delayed(Duration(seconds: 1), () {
-      addMessage(npcReply, false);
+    Future.delayed(Duration.zero).then((_) async {
+      subscribeToOnNotifyStateResponse(gameRepo);
     });
+    super.initState();
+  }
 
-    // Update response options or progress the game state as needed
-    setState(() {
-      responseOptions = []; // Clear options or provide new ones
-    });
+  @override
+  void dispose() {
+    onNotifyConversationResponseStream.drain();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+   // MessageRepository messageRepo = context.watch<MessageRepository>();
+    Size size = MediaQuery.of(context).size;
+    var gameRepo = context.watch<GameplayRepository>();
     return Scaffold(
-      backgroundColor: Colors.black, // Black background for the supernatural feel
+      backgroundColor:
+          Colors.black, // Black background for the supernatural feel
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          TextButton(
+              onPressed: () => gameRepo.sendOption(
+                  "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
+                  "NEW",
+                  "CONVERSATION",
+                  "18bdcb52-4d0f-4740-a870-d5819e2a3b63"),
+              child: Text("Start Game"))
+        ],
         title: Text(
           'Echoes of the Abyss',
           style: TextStyle(
@@ -97,7 +143,8 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/backgroud.jpg'), // Subtle background image
+            image: AssetImage(
+                'assets/images/backgroud.jpg'), // Subtle background image
             fit: BoxFit.cover,
           ),
         ),
@@ -105,92 +152,17 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: messages.length,
+                itemCount: gameRepo.conversationResponses.length,
                 itemBuilder: (context, index) {
-                  return MessageBubble(message: messages[index]);
+                  return MessageBubble(
+                    conversationResponse: gameRepo.conversationResponses[index],
+
+                  );
                 },
               ),
             ),
-            SizedBox(
-              height: 300,
-              child: GridView.builder(
-                  itemCount: relics.length,
 
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4,childAspectRatio: 2.8/4),
-                itemBuilder: (BuildContext context, int index) {
-                    return Container(
-      padding: EdgeInsets.all(5),
-                      child: Column(
-                        children: [
-                          Image.asset(relics[index].asset),
-                          Text(relics[index].name,style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white
-                          ),)
-                        ],
-                      ),
-                    );
-                },),
-            )
-            /*
-            if (responseOptions.isNotEmpty)
-              Container(
-                color: Colors.black54,
-                child: Column(
-                  children: responseOptions.map((option) {
-                    return ListTile(
-                      title: Text(
-                        option,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onTap: () {
-                        handleResponse(option);
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            */
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class MessageBubble extends StatelessWidget {
-  final Message message;
-
-  MessageBubble({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    bool isPlayer = message.isPlayer;
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      alignment: isPlayer ? Alignment.centerRight : Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: isPlayer ? Colors.blueGrey.shade800 : Colors.grey.shade800,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-              bottomLeft: isPlayer ? Radius.circular(16) : Radius.circular(0),
-              bottomRight: isPlayer ? Radius.circular(0) : Radius.circular(16),
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              message.text,
-              style: TextStyle(color: Colors.white70, fontSize: 16,),
-            ),
-          ),
         ),
       ),
     );
