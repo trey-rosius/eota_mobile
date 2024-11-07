@@ -42,7 +42,7 @@ class GameplayRepository extends ChangeNotifier {
   }
 
   set conversationResponse(ConversationResponse value) {
-    _conversationResponse.insert(0, value);
+    _conversationResponse.add(value);
     notifyListeners();
 
   }
@@ -151,5 +151,79 @@ class GameplayRepository extends ChangeNotifier {
     }
   }
 
+
+  Future<void> notifyConversationResponse(String id,String convoType,String message) async {
+
+    print("id is $id");
+    print("convo type is $convoType");
+    print("message is $message");
+
+    try {
+      String graphQLDocument = '''
+    mutation notifyConversationResponse(\$id:String!, \$conversationType:CONVERSATIONTYPE!,\$characterId:String, \$chapterId:String,
+     \$imageUrl: String,\$hasOptions:Boolean!,\$firstConversation:Boolean!, \$message:String,\$puzzleId:String,
+        \$relicId:String
+    ) {
+  notifyConversationResponse(
+        input: {
+        id: \$id,
+        conversationType: \$conversationType,
+        characterId: \$characterId,
+        chapterId: \$chapterId,
+         hasOptions: \$hasOptions,
+        firstConversation: \$firstConversation,
+        imageUrl: \$imageUrl,
+        message: \$message,
+        puzzleId: \$puzzleId,
+        relicId: \$relicId
+      }
+    ) {
+      chapterId
+      characterId
+      conversationType
+      id
+      imageUrl
+      message
+      puzzleId
+      relicId
+      firstConversation
+    hasOptions
+    }
+  
+} ''';
+
+      var operation = Amplify.API.mutate(
+
+
+          request: GraphQLRequest<String>(
+            document: graphQLDocument, apiName: "EOTA-api_API_KEY",
+            variables: {
+              "id": id,
+              "conversationType":convoType,
+              "hasOptions":true,
+              "firstConversation":false,
+              "message": message
+
+            },));
+
+
+      var response = await operation.response;
+      if (kDebugMode) {
+        print("response is $response");
+      }
+      if (response.data != null) {
+        final responseJson = json.decode(response.data!);
+        if (kDebugMode) {
+          print("here${responseJson['notifyConversationResponse']}");
+        }
+      } else {
+        print("something happened");
+      }
+    } catch (ex) {
+      if (kDebugMode) {
+        print(ex.toString());
+      }
+    }
+  }
 }
 

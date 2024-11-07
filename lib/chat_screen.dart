@@ -50,6 +50,8 @@ class _ChatScreenState extends State<ChatScreen> {
     relicId
     characterId
     chapterId
+    firstConversation
+    hasOptions
   }
   
 }
@@ -76,14 +78,20 @@ class _ChatScreenState extends State<ChatScreen> {
         if (kDebugMode) {
           print("event message data is ${event.data}");
         }
+        print("conversation response message 1 ${conversationResponse.message}");
         if (gameRepo.conversationResponses.isNotEmpty) {
           if (gameRepo.conversationResponses[0].id != conversationResponse.id) {
+            print("conversation response message ${conversationResponse.message}");
             gameRepo.conversationResponse = conversationResponse;
           }
         } else {
+          print("conversation response message 2 ${conversationResponse.message}");
           gameRepo.conversationResponse = conversationResponse;
         }
-        gameRepo.getConversationOptions(conversationResponse.id);
+        if(conversationResponse.hasOptions!){
+          gameRepo.getConversationOptions(conversationResponse.id);
+        }
+
         if (kDebugMode) {
           //  print("all list messages are $chatMessagesList");
           print('Subscription event data received: ${event.data}');
@@ -155,6 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: ListView.builder(
+
                 itemCount: gameRepo.conversationResponses.length,
                 itemBuilder: (context, index) {
                   return MessageBubble(
@@ -195,23 +204,39 @@ class OptionWidget extends StatefulWidget {
 class _OptionWidgetState extends State<OptionWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    var gameRepo = context.watch<GameplayRepository>();
+    return InkWell(
+      onTap: (){
+        gameRepo.notifyConversationResponse(widget.option.id, "CONVERSATION", widget.option.optionText
+            );
 
-      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-      decoration: BoxDecoration(
-        color:Colors.grey.shade800,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(50),
-          topRight: Radius.circular(50),
-          bottomLeft:
-          Radius.circular(50) ,
-          bottomRight:
-          Radius.circular(50),
+        Future.delayed(Duration(seconds: 2)).then((_) async {
+
+          gameRepo.sendOption(widget.option.nextConversationId, "CONTINUE",
+              widget.option.nextStepType.name, widget.option.id);
+        });
+
+
+
+      },
+      child: Container(
+
+        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        decoration: BoxDecoration(
+          color:Colors.grey.shade800,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+            bottomLeft:
+            Radius.circular(50) ,
+            bottomRight:
+            Radius.circular(50),
+          ),
         ),
-      ),
-      child: Text(
-        widget.option.optionText,
-        style: TextStyle(fontSize: 20),
+        child: Text(
+          widget.option.optionText,
+          style: TextStyle(fontSize: 20),
+        ),
       ),
     );
   }

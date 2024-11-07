@@ -29,6 +29,7 @@ class Conversation {
   final String? _chapterId;
   final String? _characterId;
   final String? _conversationId;
+  final bool? _firstConversation;
   final bool? _hasOptions;
   final String id;
   final String? _message;
@@ -73,6 +74,19 @@ class Conversation {
     }
   }
   
+  bool get firstConversation {
+    try {
+      return _firstConversation!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
   bool get hasOptions {
     try {
       return _hasOptions!;
@@ -103,13 +117,14 @@ class Conversation {
     return _options;
   }
   
-  const Conversation._internal({required chapterId, required characterId, required conversationId, required hasOptions, required this.id, required message, options}): _chapterId = chapterId, _characterId = characterId, _conversationId = conversationId, _hasOptions = hasOptions, _message = message, _options = options;
+  const Conversation._internal({required chapterId, required characterId, required conversationId, required firstConversation, required hasOptions, required this.id, required message, options}): _chapterId = chapterId, _characterId = characterId, _conversationId = conversationId, _firstConversation = firstConversation, _hasOptions = hasOptions, _message = message, _options = options;
   
-  factory Conversation({required String chapterId, required String characterId, required String conversationId, required bool hasOptions, String? id, required String message, List<Option>? options}) {
+  factory Conversation({required String chapterId, required String characterId, required String conversationId, required bool firstConversation, required bool hasOptions, String? id, required String message, List<Option>? options}) {
     return Conversation._internal(
       chapterId: chapterId,
       characterId: characterId,
       conversationId: conversationId,
+      firstConversation: firstConversation,
       hasOptions: hasOptions,
       id: id == null ? amplify_core.UUID.getUUID() : id,
       message: message,
@@ -127,6 +142,7 @@ class Conversation {
       _chapterId == other._chapterId &&
       _characterId == other._characterId &&
       _conversationId == other._conversationId &&
+      _firstConversation == other._firstConversation &&
       _hasOptions == other._hasOptions &&
       id == other.id &&
       _message == other._message &&
@@ -144,6 +160,7 @@ class Conversation {
     buffer.write("chapterId=" + "$_chapterId" + ", ");
     buffer.write("characterId=" + "$_characterId" + ", ");
     buffer.write("conversationId=" + "$_conversationId" + ", ");
+    buffer.write("firstConversation=" + (_firstConversation != null ? _firstConversation!.toString() : "null") + ", ");
     buffer.write("hasOptions=" + (_hasOptions != null ? _hasOptions!.toString() : "null") + ", ");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("message=" + "$_message" + ", ");
@@ -153,11 +170,12 @@ class Conversation {
     return buffer.toString();
   }
   
-  Conversation copyWith({String? chapterId, String? characterId, String? conversationId, bool? hasOptions, String? id, String? message, List<Option>? options}) {
+  Conversation copyWith({String? chapterId, String? characterId, String? conversationId, bool? firstConversation, bool? hasOptions, String? id, String? message, List<Option>? options}) {
     return Conversation._internal(
       chapterId: chapterId ?? this.chapterId,
       characterId: characterId ?? this.characterId,
       conversationId: conversationId ?? this.conversationId,
+      firstConversation: firstConversation ?? this.firstConversation,
       hasOptions: hasOptions ?? this.hasOptions,
       id: id ?? this.id,
       message: message ?? this.message,
@@ -168,6 +186,7 @@ class Conversation {
     ModelFieldValue<String>? chapterId,
     ModelFieldValue<String>? characterId,
     ModelFieldValue<String>? conversationId,
+    ModelFieldValue<bool>? firstConversation,
     ModelFieldValue<bool>? hasOptions,
     ModelFieldValue<String>? id,
     ModelFieldValue<String>? message,
@@ -177,6 +196,7 @@ class Conversation {
       chapterId: chapterId == null ? this.chapterId : chapterId.value,
       characterId: characterId == null ? this.characterId : characterId.value,
       conversationId: conversationId == null ? this.conversationId : conversationId.value,
+      firstConversation: firstConversation == null ? this.firstConversation : firstConversation.value,
       hasOptions: hasOptions == null ? this.hasOptions : hasOptions.value,
       id: id == null ? this.id : id.value,
       message: message == null ? this.message : message.value,
@@ -188,6 +208,7 @@ class Conversation {
     : _chapterId = json['chapterId'],
       _characterId = json['characterId'],
       _conversationId = json['conversationId'],
+      _firstConversation = json['firstConversation'],
       _hasOptions = json['hasOptions'],
       id = json['id'],
       _message = json['message'],
@@ -199,13 +220,14 @@ class Conversation {
         : null;
   
   Map<String, dynamic> toJson() => {
-    'chapterId': _chapterId, 'characterId': _characterId, 'conversationId': _conversationId, 'hasOptions': _hasOptions, 'id': id, 'message': _message, 'options': _options?.map((Option? e) => e?.toJson()).toList()
+    'chapterId': _chapterId, 'characterId': _characterId, 'conversationId': _conversationId, 'firstConversation': _firstConversation, 'hasOptions': _hasOptions, 'id': id, 'message': _message, 'options': _options?.map((Option? e) => e?.toJson()).toList()
   };
   
   Map<String, Object?> toMap() => {
     'chapterId': _chapterId,
     'characterId': _characterId,
     'conversationId': _conversationId,
+    'firstConversation': _firstConversation,
     'hasOptions': _hasOptions,
     'id': id,
     'message': _message,
@@ -232,6 +254,12 @@ class Conversation {
       fieldName: 'conversationId',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'firstConversation',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(

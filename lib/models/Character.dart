@@ -26,12 +26,22 @@ import 'package:collection/collection.dart';
 
 /** This is an auto generated class representing the Character type in your schema. */
 class Character {
+  final int? _baseHealth;
+  final int? _baseMana;
   final String? _characterBackstory;
   final String? _characterName;
   final List<Conversation>? _conversation;
   final String id;
   final CHARACTER_ROLE? _role;
 
+  int? get baseHealth {
+    return _baseHealth;
+  }
+  
+  int? get baseMana {
+    return _baseMana;
+  }
+  
   String get characterBackstory {
     try {
       return _characterBackstory!;
@@ -61,7 +71,7 @@ class Character {
   List<Conversation>? get conversation {
     return _conversation;
   }
-
+  
   CHARACTER_ROLE get role {
     try {
       return _role!;
@@ -75,10 +85,12 @@ class Character {
     }
   }
   
-  const Character._internal({required characterBackstory, required characterName, conversation, required this.id, required role}): _characterBackstory = characterBackstory, _characterName = characterName, _conversation = conversation, _role = role;
+  const Character._internal({baseHealth, baseMana, required characterBackstory, required characterName, conversation, required this.id, required role}): _baseHealth = baseHealth, _baseMana = baseMana, _characterBackstory = characterBackstory, _characterName = characterName, _conversation = conversation, _role = role;
   
-  factory Character({required String characterBackstory, required String characterName, List<Conversation>? conversation, String? id, required CHARACTER_ROLE role}) {
+  factory Character({int? baseHealth, int? baseMana, required String characterBackstory, required String characterName, List<Conversation>? conversation, String? id, required CHARACTER_ROLE role}) {
     return Character._internal(
+      baseHealth: baseHealth,
+      baseMana: baseMana,
       characterBackstory: characterBackstory,
       characterName: characterName,
       conversation: conversation != null ? List<Conversation>.unmodifiable(conversation) : conversation,
@@ -94,6 +106,8 @@ class Character {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Character &&
+      _baseHealth == other._baseHealth &&
+      _baseMana == other._baseMana &&
       _characterBackstory == other._characterBackstory &&
       _characterName == other._characterName &&
       DeepCollectionEquality().equals(_conversation, other._conversation) &&
@@ -109,6 +123,8 @@ class Character {
     var buffer = new StringBuffer();
     
     buffer.write("Character {");
+    buffer.write("baseHealth=" + (_baseHealth != null ? _baseHealth!.toString() : "null") + ", ");
+    buffer.write("baseMana=" + (_baseMana != null ? _baseMana!.toString() : "null") + ", ");
     buffer.write("characterBackstory=" + "$_characterBackstory" + ", ");
     buffer.write("characterName=" + "$_characterName" + ", ");
     buffer.write("conversation=" + (_conversation != null ? _conversation!.toString() : "null") + ", ");
@@ -119,8 +135,10 @@ class Character {
     return buffer.toString();
   }
   
-  Character copyWith({String? characterBackstory, String? characterName, List<Conversation>? conversation, String? id, CHARACTER_ROLE? role}) {
+  Character copyWith({int? baseHealth, int? baseMana, String? characterBackstory, String? characterName, List<Conversation>? conversation, String? id, CHARACTER_ROLE? role}) {
     return Character._internal(
+      baseHealth: baseHealth ?? this.baseHealth,
+      baseMana: baseMana ?? this.baseMana,
       characterBackstory: characterBackstory ?? this.characterBackstory,
       characterName: characterName ?? this.characterName,
       conversation: conversation ?? this.conversation,
@@ -129,6 +147,8 @@ class Character {
   }
   
   Character copyWithModelFieldValues({
+    ModelFieldValue<int?>? baseHealth,
+    ModelFieldValue<int?>? baseMana,
     ModelFieldValue<String>? characterBackstory,
     ModelFieldValue<String>? characterName,
     ModelFieldValue<List<Conversation>>? conversation,
@@ -136,6 +156,8 @@ class Character {
     ModelFieldValue<CHARACTER_ROLE>? role
   }) {
     return Character._internal(
+      baseHealth: baseHealth == null ? this.baseHealth : baseHealth.value,
+      baseMana: baseMana == null ? this.baseMana : baseMana.value,
       characterBackstory: characterBackstory == null ? this.characterBackstory : characterBackstory.value,
       characterName: characterName == null ? this.characterName : characterName.value,
       conversation: conversation == null ? this.conversation : conversation.value,
@@ -145,7 +167,9 @@ class Character {
   }
   
   Character.fromJson(Map<String, dynamic> json)  
-    : _characterBackstory = json['characterBackstory'],
+    : _baseHealth = (json['baseHealth'] as num?)?.toInt(),
+      _baseMana = (json['baseMana'] as num?)?.toInt(),
+      _characterBackstory = json['characterBackstory'],
       _characterName = json['characterName'],
       _conversation = json['conversation'] is List
         ? (json['conversation'] as List)
@@ -157,10 +181,12 @@ class Character {
       _role = amplify_core.enumFromString<CHARACTER_ROLE>(json['role'], CHARACTER_ROLE.values);
   
   Map<String, dynamic> toJson() => {
-    'characterBackstory': _characterBackstory, 'characterName': _characterName, 'conversation': _conversation?.map((Conversation? e) => e?.toJson()).toList(), 'id': id, 'role': amplify_core.enumToString(_role)
+    'baseHealth': _baseHealth, 'baseMana': _baseMana, 'characterBackstory': _characterBackstory, 'characterName': _characterName, 'conversation': _conversation?.map((Conversation? e) => e?.toJson()).toList(), 'id': id, 'role': amplify_core.enumToString(_role)
   };
   
   Map<String, Object?> toMap() => {
+    'baseHealth': _baseHealth,
+    'baseMana': _baseMana,
     'characterBackstory': _characterBackstory,
     'characterName': _characterName,
     'conversation': _conversation,
@@ -171,6 +197,18 @@ class Character {
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Character";
     modelSchemaDefinition.pluralName = "Characters";
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'baseHealth',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'baseMana',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'characterBackstory',

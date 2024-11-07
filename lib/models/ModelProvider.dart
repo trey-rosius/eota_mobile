@@ -52,7 +52,7 @@ export 'Puzzles.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "5bb8282f2e5d7a5019a45c6ddd4866ec";
+  String version = "42e0df097b712e292865b87e96b9aa3a";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [];
   @override
