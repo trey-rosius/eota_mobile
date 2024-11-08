@@ -30,8 +30,8 @@ class _GeneratedImageState extends State<GeneratedImage> {
                       maxWidth: MediaQuery.of(context).size.width,
                     ),
                     child:  CachedNetworkImage(
-                        width: 30.0,
-                        height: 30.0,
+                        width:MediaQuery.of(context).size.width,
+
                         fit: BoxFit.cover,
                         imageUrl: widget.conversationResponse!.imageUrl!,
                         placeholder: (context,

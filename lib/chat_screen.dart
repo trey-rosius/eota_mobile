@@ -1,7 +1,9 @@
 
+import 'package:eota/generated_image.dart';
 import 'package:eota/models/ConversationResponse.dart';
 import 'package:eota/providers/game_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:provider/provider.dart';
 import 'message.dart';
@@ -30,6 +32,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final ScrollController _scrollController = new ScrollController();
   late final Stream<GraphQLResponse<String>> onNotifyConversationResponseStream;
   Future<void> subscribeToOnNotifyStateResponse(
       GameplayRepository gameRepo) async {
@@ -72,14 +75,29 @@ class _ChatScreenState extends State<ChatScreen> {
         if (kDebugMode) {
           print("event message data is ${event.data}");
         }
-        print("conversation response message 1 ${conversationResponse.message}");
+
         if (gameRepo.conversationResponses.isNotEmpty) {
           if (gameRepo.conversationResponses[0].id != conversationResponse.id) {
-            print("conversation response message ${conversationResponse.message}");
             gameRepo.conversationResponse = conversationResponse;
+            print("conversation response message ${conversationResponse.message}");
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            });
+
           }
         } else {
           print("conversation response message 2 ${conversationResponse.message}");
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          });
           gameRepo.conversationResponse = conversationResponse;
         }
         if(conversationResponse.hasOptions!){
@@ -155,18 +173,22 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         child: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
+           Container(
 
-                itemCount: gameRepo.conversationResponses.length,
-                itemBuilder: (context, index) {
-                  return MessageBubble(
-                    conversationResponse: gameRepo.conversationResponses[index],
+                height: size.height/1.6,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: gameRepo.conversationResponses.length,
+                  itemBuilder: (context, index) {
+                    return  gameRepo.conversationResponses[index].conversationType.name =="CONVERSATION"?
+                    MessageBubble(
+                      conversationResponse: gameRepo.conversationResponses[index],
 
-                  );
-                },
+                    ): GeneratedImage(conversationResponse: gameRepo.conversationResponses[index]);
+                  },
+                ),
               ),
-            ),
+
            gameRepo.options.isEmpty ? SizedBox(): Container(
              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
              child: Wrap(
