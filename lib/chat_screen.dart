@@ -1,9 +1,8 @@
-import 'package:eota/home_screen.dart';
-import 'package:eota/message_repository.dart';
+
 import 'package:eota/models/ConversationResponse.dart';
 import 'package:eota/providers/game_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:pretty_animated_text/pretty_animated_text.dart';
+
 import 'package:provider/provider.dart';
 import 'message.dart';
 import 'message_bubble.dart';
@@ -12,12 +11,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
 
 import 'models/Option.dart';
 

@@ -7,7 +7,6 @@ import 'message_repository.dart';
 
 class MessageBubble extends StatefulWidget {
   final ConversationResponse? conversationResponse;
- // final List<String> responseOptions;
 
   MessageBubble({required this.conversationResponse});
 
