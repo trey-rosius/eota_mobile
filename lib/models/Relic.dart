@@ -23,19 +23,19 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 
 
-/** This is an auto generated class representing the Option type in your schema. */
-class Option {
-  final String? _conversationId;
+/** This is an auto generated class representing the Relic type in your schema. */
+class Relic {
+  final String? _chapterId;
+  final String? _characterId;
+  final String? _description;
   final String id;
-  final String? _nextConversationId;
-  final CONVERSATIONTYPE? _nextStepType;
-  final String? _optionText;
+  final String? _imageUrl;
+  final String? _name;
   final String? _puzzleId;
-  final String? _relicId;
 
-  String get conversationId {
+  String get chapterId {
     try {
-      return _conversationId!;
+      return _chapterId!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -46,22 +46,9 @@ class Option {
     }
   }
   
-  String get nextConversationId {
+  String get characterId {
     try {
-      return _nextConversationId!;
-    } catch(e) {
-      throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-
-  CONVERSATIONTYPE get nextStepType {
-    try {
-      return _nextStepType!;
+      return _characterId!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -72,9 +59,9 @@ class Option {
     }
   }
   
-  String get optionText {
+  String get description {
     try {
-      return _optionText!;
+      return _description!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -85,25 +72,56 @@ class Option {
     }
   }
   
-  String? get puzzleId {
-    return _puzzleId;
+  String get imageUrl {
+    try {
+      return _imageUrl!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  String? get relicId {
-    return _relicId;
+  String get name {
+    try {
+      return _name!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  const Option._internal({required conversationId, required this.id, required nextConversationId, required nextStepType, required optionText, puzzleId, relicId}): _conversationId = conversationId, _nextConversationId = nextConversationId, _nextStepType = nextStepType, _optionText = optionText, _puzzleId = puzzleId, _relicId = relicId;
+  String get puzzleId {
+    try {
+      return _puzzleId!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
   
-  factory Option({required String conversationId, String? id, required String nextConversationId, required CONVERSATIONTYPE nextStepType, required String optionText, String? puzzleId, String? relicId}) {
-    return Option._internal(
-      conversationId: conversationId,
+  const Relic._internal({required chapterId, required characterId, required description, required this.id, required imageUrl, required name, required puzzleId}): _chapterId = chapterId, _characterId = characterId, _description = description, _imageUrl = imageUrl, _name = name, _puzzleId = puzzleId;
+  
+  factory Relic({required String chapterId, required String characterId, required String description, String? id, required String imageUrl, required String name, required String puzzleId}) {
+    return Relic._internal(
+      chapterId: chapterId,
+      characterId: characterId,
+      description: description,
       id: id == null ? amplify_core.UUID.getUUID() : id,
-      nextConversationId: nextConversationId,
-      nextStepType: nextStepType,
-      optionText: optionText,
-      puzzleId: puzzleId,
-      relicId: relicId);
+      imageUrl: imageUrl,
+      name: name,
+      puzzleId: puzzleId);
   }
   
   bool equals(Object other) {
@@ -113,14 +131,14 @@ class Option {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Option &&
-      _conversationId == other._conversationId &&
+    return other is Relic &&
+      _chapterId == other._chapterId &&
+      _characterId == other._characterId &&
+      _description == other._description &&
       id == other.id &&
-      _nextConversationId == other._nextConversationId &&
-      _nextStepType == other._nextStepType &&
-      _optionText == other._optionText &&
-      _puzzleId == other._puzzleId &&
-      _relicId == other._relicId;
+      _imageUrl == other._imageUrl &&
+      _name == other._name &&
+      _puzzleId == other._puzzleId;
   }
   
   @override
@@ -130,79 +148,91 @@ class Option {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Option {");
-    buffer.write("conversationId=" + "$_conversationId" + ", ");
+    buffer.write("Relic {");
+    buffer.write("chapterId=" + "$_chapterId" + ", ");
+    buffer.write("characterId=" + "$_characterId" + ", ");
+    buffer.write("description=" + "$_description" + ", ");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("nextConversationId=" + "$_nextConversationId" + ", ");
-    buffer.write("nextStepType=" + (_nextStepType != null ? amplify_core.enumToString(_nextStepType)! : "null") + ", ");
-    buffer.write("optionText=" + "$_optionText" + ", ");
-    buffer.write("puzzleId=" + "$_puzzleId" + ", ");
-    buffer.write("relicId=" + "$_relicId");
+    buffer.write("imageUrl=" + "$_imageUrl" + ", ");
+    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("puzzleId=" + "$_puzzleId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Option copyWith({String? conversationId, String? id, String? nextConversationId, CONVERSATIONTYPE? nextStepType, String? optionText, String? puzzleId, String? relicId}) {
-    return Option._internal(
-      conversationId: conversationId ?? this.conversationId,
+  Relic copyWith({String? chapterId, String? characterId, String? description, String? id, String? imageUrl, String? name, String? puzzleId}) {
+    return Relic._internal(
+      chapterId: chapterId ?? this.chapterId,
+      characterId: characterId ?? this.characterId,
+      description: description ?? this.description,
       id: id ?? this.id,
-      nextConversationId: nextConversationId ?? this.nextConversationId,
-      nextStepType: nextStepType ?? this.nextStepType,
-      optionText: optionText ?? this.optionText,
-      puzzleId: puzzleId ?? this.puzzleId,
-      relicId: relicId ?? this.relicId);
+      imageUrl: imageUrl ?? this.imageUrl,
+      name: name ?? this.name,
+      puzzleId: puzzleId ?? this.puzzleId);
   }
   
-  Option copyWithModelFieldValues({
-    ModelFieldValue<String>? conversationId,
+  Relic copyWithModelFieldValues({
+    ModelFieldValue<String>? chapterId,
+    ModelFieldValue<String>? characterId,
+    ModelFieldValue<String>? description,
     ModelFieldValue<String>? id,
-    ModelFieldValue<String>? nextConversationId,
-    ModelFieldValue<CONVERSATIONTYPE>? nextStepType,
-    ModelFieldValue<String>? optionText,
-    ModelFieldValue<String?>? puzzleId,
-    ModelFieldValue<String?>? relicId
+    ModelFieldValue<String>? imageUrl,
+    ModelFieldValue<String>? name,
+    ModelFieldValue<String>? puzzleId
   }) {
-    return Option._internal(
-      conversationId: conversationId == null ? this.conversationId : conversationId.value,
+    return Relic._internal(
+      chapterId: chapterId == null ? this.chapterId : chapterId.value,
+      characterId: characterId == null ? this.characterId : characterId.value,
+      description: description == null ? this.description : description.value,
       id: id == null ? this.id : id.value,
-      nextConversationId: nextConversationId == null ? this.nextConversationId : nextConversationId.value,
-      nextStepType: nextStepType == null ? this.nextStepType : nextStepType.value,
-      optionText: optionText == null ? this.optionText : optionText.value,
-      puzzleId: puzzleId == null ? this.puzzleId : puzzleId.value,
-      relicId: relicId == null ? this.relicId : relicId.value
+      imageUrl: imageUrl == null ? this.imageUrl : imageUrl.value,
+      name: name == null ? this.name : name.value,
+      puzzleId: puzzleId == null ? this.puzzleId : puzzleId.value
     );
   }
   
-  Option.fromJson(Map<String, dynamic> json)  
-    : _conversationId = json['conversationId'],
+  Relic.fromJson(Map<String, dynamic> json)  
+    : _chapterId = json['chapterId'],
+      _characterId = json['characterId'],
+      _description = json['description'],
       id = json['id'],
-      _nextConversationId = json['nextConversationId'],
-      _nextStepType = amplify_core.enumFromString<CONVERSATIONTYPE>(json['nextStepType'], CONVERSATIONTYPE.values),
-      _optionText = json['optionText'],
-      _puzzleId = json['puzzleId'],
-      _relicId = json['relicId'];
+      _imageUrl = json['imageUrl'],
+      _name = json['name'],
+      _puzzleId = json['puzzleId'];
   
   Map<String, dynamic> toJson() => {
-    'conversationId': _conversationId, 'id': id, 'nextConversationId': _nextConversationId, 'nextStepType': amplify_core.enumToString(_nextStepType), 'optionText': _optionText, 'puzzleId': _puzzleId, 'relicId': _relicId
+    'chapterId': _chapterId, 'characterId': _characterId, 'description': _description, 'id': id, 'imageUrl': _imageUrl, 'name': _name, 'puzzleId': _puzzleId
   };
   
   Map<String, Object?> toMap() => {
-    'conversationId': _conversationId,
+    'chapterId': _chapterId,
+    'characterId': _characterId,
+    'description': _description,
     'id': id,
-    'nextConversationId': _nextConversationId,
-    'nextStepType': _nextStepType,
-    'optionText': _optionText,
-    'puzzleId': _puzzleId,
-    'relicId': _relicId
+    'imageUrl': _imageUrl,
+    'name': _name,
+    'puzzleId': _puzzleId
   };
 
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Option";
-    modelSchemaDefinition.pluralName = "Options";
+    modelSchemaDefinition.name = "Relic";
+    modelSchemaDefinition.pluralName = "Relics";
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
-      fieldName: 'conversationId',
+      fieldName: 'chapterId',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'characterId',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'description',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
@@ -214,32 +244,20 @@ class Option {
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
-      fieldName: 'nextConversationId',
+      fieldName: 'imageUrl',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
-      fieldName: 'nextStepType',
-      isRequired: true,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.enumeration)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
-      fieldName: 'optionText',
+      fieldName: 'name',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'puzzleId',
-      isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
-      fieldName: 'relicId',
-      isRequired: false,
+      isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
   });

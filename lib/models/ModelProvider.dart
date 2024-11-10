@@ -32,6 +32,8 @@ import 'Options.dart';
 import 'Player.dart';
 import 'Puzzle.dart';
 import 'Puzzles.dart';
+import 'Relic.dart';
+import 'Relics.dart';
 
 export 'CHARACTER_ROLE.dart';
 export 'CONVERSATIONTYPE.dart';
@@ -49,14 +51,16 @@ export 'PUZZLETYPE.dart';
 export 'Player.dart';
 export 'Puzzle.dart';
 export 'Puzzles.dart';
+export 'Relic.dart';
+export 'Relics.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "42e0df097b712e292865b87e96b9aa3a";
+  String version = "0693d0a42b12a263cba4347a074a1921";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [Chapter.schema, Chapters.schema, Character.schema, Characters.schema, Conversation.schema, ConversationResponse.schema, Conversations.schema, Option.schema, Options.schema, Player.schema, Puzzle.schema, Puzzles.schema];
+  List<amplify_core.ModelSchema> customTypeSchemas = [Chapter.schema, Chapters.schema, Character.schema, Characters.schema, Conversation.schema, ConversationResponse.schema, Conversations.schema, Option.schema, Options.schema, Player.schema, Puzzle.schema, Puzzles.schema, Relic.schema, Relics.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;

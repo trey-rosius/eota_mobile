@@ -32,6 +32,7 @@ type Conversation {
   chapterId: String!
   characterId: String!
   conversationId: String!
+  conversationType: CONVERSATIONTYPE!
   firstConversation: Boolean!
   hasOptions: Boolean!
   id: String!
@@ -64,10 +65,13 @@ type Mutation {
   createConversationOption(input: CreateOptionInput!): Option! @aws_api_key
   createConversationPuzzle(input: CreatePuzzleInput!): Puzzle! @aws_api_key
   createPlayerAccount(input: CreatePlayerInput!): Player! @aws_api_key
+  createRelic(input: CreateRelicInput!): Relic! @aws_api_key
   notifyConversationResponse(input: ConversationResponseInput!): ConversationResponse! @aws_api_key @aws_iam
   sendOption(input: OptionInput!): Boolean! @aws_api_key
   updateConversation(input: UpdateConversationInput!): Conversation! @aws_api_key
+  updateConversationOption(input: UpdateOptionInput!): Option! @aws_api_key
   updatePlayerAccount(input: UpdatedPlayerInput!): Player! @aws_api_key
+  updateRelic(input: UpdateRelicInput!): Relic! @aws_api_key
 }
 
 type Option {
@@ -75,7 +79,6 @@ type Option {
   id: String!
   nextConversationId: String!
   nextStepType: CONVERSATIONTYPE!
-  optionId: String!
   optionText: String!
   puzzleId: String
   relicId: String
@@ -94,7 +97,7 @@ type Player {
   unlockedRelicIds: [String!]
 }
 
-type Puzzle {
+type Puzzle @aws_api_key {
   chapterId: String!
   decryptedMessage: String!
   encryptedMessage: String!
@@ -120,9 +123,25 @@ type Query {
   getConversation(conversationId: String): Conversation!
   getConversationOptions(conversationId: String!): Options!
   getConversations(limit: Int!, nextToken: String): Conversations!
-  getOption(id: ID): Boolean!
+  getOption(optionId: String!): Option!
   getPuzzle(puzzleId: String!): Puzzle!
   getPuzzles(limit: Int!): Puzzles!
+  getRelic(relicId: String!): Relic! @aws_api_key
+  getRelics: Relics! @aws_api_key
+}
+
+type Relic {
+  chapterId: String!
+  characterId: String!
+  description: String!
+  id: String!
+  imageUrl: String!
+  name: String!
+  puzzleId: String!
+}
+
+type Relics {
+  items: [Relic!]!
 }
 
 type Subscription {
@@ -141,6 +160,7 @@ enum CONVERSATIONTYPE {
   GENERATIVE_IMAGE
   PUZZLE
   RELIC
+  RIDDLE
 }
 
 enum GAMESTATE {
@@ -154,8 +174,8 @@ enum PUZZLETYPE {
 }
 
 input ConversationResponseInput @aws_api_key {
-  chapterId: String
-  characterId: String
+  chapterId: String!
+  characterId: String!
   conversationType: CONVERSATIONTYPE!
   firstConversation: Boolean!
   hasOptions: Boolean!
@@ -181,6 +201,7 @@ input CreateCharacterInput {
 input CreateConversationInput {
   chapterId: String!
   characterId: String!
+  conversationType: CONVERSATIONTYPE!
   firstConversation: Boolean!
   hasOptions: Boolean!
   message: String!
@@ -213,20 +234,51 @@ input CreatePuzzleInput {
   puzzleType: PUZZLETYPE!
 }
 
+input CreateRelicInput {
+  chapterId: String!
+  characterId: String!
+  description: String!
+  imageUrl: String!
+  name: String!
+  puzzleId: String!
+}
+
 input OptionInput {
   conversationId: String
   gameState: GAMESTATE!
   nextStepType: String!
   optionId: String
+  puzzleId: String
 }
 
 input UpdateConversationInput {
   chapterId: String
   characterId: String
+  conversationType: CONVERSATIONTYPE!
   firstConversation: Boolean!
   hasOptions: Boolean
   id: String!
   message: String!
+}
+
+input UpdateOptionInput {
+  conversationId: String!
+  id: String!
+  nextConversationId: String!
+  nextStepType: CONVERSATIONTYPE!
+  optionText: String!
+  puzzleId: String
+  relicId: String
+}
+
+input UpdateRelicInput {
+  chapterId: String
+  characterId: String
+  description: String!
+  id: String!
+  imageUrl: String!
+  name: String!
+  puzzleId: String
 }
 
 input UpdatedPlayerInput {

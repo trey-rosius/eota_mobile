@@ -39,7 +39,7 @@ class ConversationResponse {
   String? get chapterId {
     return _chapterId;
   }
-
+  
   String? get characterId {
     return _characterId;
   }
@@ -56,33 +56,33 @@ class ConversationResponse {
           );
     }
   }
-
+  
   bool? get firstConversation {
     return _firstConversation;
   }
-
+  
   bool? get hasOptions {
     return _hasOptions;
   }
-
+  
   String? get imageUrl {
     return _imageUrl;
   }
-
+  
   String? get message {
     return _message;
   }
-
+  
   String? get puzzleId {
     return _puzzleId;
   }
-
+  
   String? get relicId {
     return _relicId;
   }
-
+  
   const ConversationResponse._internal({chapterId, characterId, required conversationType, firstConversation, hasOptions, required this.id, imageUrl, message, puzzleId, relicId}): _chapterId = chapterId, _characterId = characterId, _conversationType = conversationType, _firstConversation = firstConversation, _hasOptions = hasOptions, _imageUrl = imageUrl, _message = message, _puzzleId = puzzleId, _relicId = relicId;
-
+  
   factory ConversationResponse({String? chapterId, String? characterId, required CONVERSATIONTYPE conversationType, bool? firstConversation, bool? hasOptions, String? id, String? imageUrl, String? message, String? puzzleId, String? relicId}) {
     return ConversationResponse._internal(
       chapterId: chapterId,
@@ -96,11 +96,11 @@ class ConversationResponse {
       puzzleId: puzzleId,
       relicId: relicId);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
@@ -116,14 +116,14 @@ class ConversationResponse {
       _puzzleId == other._puzzleId &&
       _relicId == other._relicId;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("ConversationResponse {");
     buffer.write("chapterId=" + "$_chapterId" + ", ");
     buffer.write("characterId=" + "$_characterId" + ", ");
@@ -136,10 +136,10 @@ class ConversationResponse {
     buffer.write("puzzleId=" + "$_puzzleId" + ", ");
     buffer.write("relicId=" + "$_relicId");
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
+  
   ConversationResponse copyWith({String? chapterId, String? characterId, CONVERSATIONTYPE? conversationType, bool? firstConversation, bool? hasOptions, String? id, String? imageUrl, String? message, String? puzzleId, String? relicId}) {
     return ConversationResponse._internal(
       chapterId: chapterId ?? this.chapterId,
@@ -153,7 +153,7 @@ class ConversationResponse {
       puzzleId: puzzleId ?? this.puzzleId,
       relicId: relicId ?? this.relicId);
   }
-
+  
   ConversationResponse copyWithModelFieldValues({
     ModelFieldValue<String?>? chapterId,
     ModelFieldValue<String?>? characterId,
@@ -179,8 +179,8 @@ class ConversationResponse {
       relicId: relicId == null ? this.relicId : relicId.value
     );
   }
-
-  ConversationResponse.fromJson(Map<String, dynamic> json)
+  
+  ConversationResponse.fromJson(Map<String, dynamic> json)  
     : _chapterId = json['chapterId'],
       _characterId = json['characterId'],
       _conversationType = amplify_core.enumFromString<CONVERSATIONTYPE>(json['conversationType'], CONVERSATIONTYPE.values),
@@ -191,11 +191,11 @@ class ConversationResponse {
       _message = json['message'],
       _puzzleId = json['puzzleId'],
       _relicId = json['relicId'];
-
+  
   Map<String, dynamic> toJson() => {
     'chapterId': _chapterId, 'characterId': _characterId, 'conversationType': amplify_core.enumToString(_conversationType), 'firstConversation': _firstConversation, 'hasOptions': _hasOptions, 'id': id, 'imageUrl': _imageUrl, 'message': _message, 'puzzleId': _puzzleId, 'relicId': _relicId
   };
-
+  
   Map<String, Object?> toMap() => {
     'chapterId': _chapterId,
     'characterId': _characterId,
@@ -212,19 +212,19 @@ class ConversationResponse {
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "ConversationResponse";
     modelSchemaDefinition.pluralName = "ConversationResponses";
-
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'chapterId',
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
-
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'characterId',
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
-
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'conversationType',
       isRequired: true,

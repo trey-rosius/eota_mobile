@@ -2,6 +2,7 @@
 import 'package:eota/generated_image.dart';
 import 'package:eota/models/ConversationResponse.dart';
 import 'package:eota/providers/game_repository.dart';
+import 'package:eota/puzzle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -146,10 +147,13 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
               onPressed: () => gameRepo.sendOption(
-                  "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
-                  "NEW",
-                  "CONVERSATION",
-                  "18bdcb52-4d0f-4740-a870-d5819e2a3b63"),
+                  conversationId: "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
+                 gameState:  "NEW",
+                  nextStepType: "CONVERSATION",
+                 optionId:  "18bdcb52-4d0f-4740-a870-d5819e2a3b63",
+                  puzzleId:""
+
+              ),
               child: Text("Start Game"))
         ],
         title: Text(
@@ -184,7 +188,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     MessageBubble(
                       conversationResponse: gameRepo.conversationResponses[index],
 
-                    ): GeneratedImage(conversationResponse: gameRepo.conversationResponses[index]);
+                    ):
+                    gameRepo.conversationResponses[index].conversationType.name =="PUZZLE" ?
+                    PuzzleWidget(conversationResponse: gameRepo.conversationResponses[index]) :
+
+                    GeneratedImage(conversationResponse: gameRepo.conversationResponses[index]);
                   },
                 ),
               ),
@@ -228,8 +236,8 @@ class _OptionWidgetState extends State<OptionWidget> {
 
         Future.delayed(Duration(seconds: 2)).then((_) async {
 
-          gameRepo.sendOption(widget.option.nextConversationId, "CONTINUE",
-              widget.option.nextStepType.name, widget.option.id);
+          gameRepo.sendOption(conversationId:widget.option.nextConversationId, gameState: "CONTINUE",
+              nextStepType: widget.option.nextStepType.name,optionId: widget.option.id);
         });
 
 

@@ -10,6 +10,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
 import '../models/Option.dart';
 import '../models/Options.dart';
+import '../models/Puzzle.dart';
 class GameplayRepository extends ChangeNotifier {
 
   GameplayRepository.instance();
@@ -47,6 +48,60 @@ class GameplayRepository extends ChangeNotifier {
 
   }
 
+  Future<Puzzle> getPuzzle(String puzzleId) async {
+    loading = true;
+
+
+    String graphQLDocument = '''
+    
+    
+query getPuzzle(\$puzzleId: String!)  {
+  getPuzzle(puzzleId: \$puzzleId) {
+    chapterId
+    decryptedMessage
+    encryptedMessage
+    hint
+    id
+    puzzleDescription
+    puzzleId
+    puzzleName
+    puzzleType
+  }
+}
+  ''';
+
+
+    var operation = Amplify.API.query(
+        request: GraphQLRequest<String>(
+          document: graphQLDocument,
+          apiName: "EOTA-api_API_KEY",
+          variables: {
+            "puzzleId":puzzleId
+
+          },
+        ));
+
+    var response = await operation.response;
+    if (kDebugMode) {
+      print("returning ${response}");
+    }
+
+    final responseJson = json.decode(response.data!);
+    loading = false;
+
+    if (kDebugMode) {
+      print("returning ${responseJson['getPuzzle']}");
+    }
+
+    Puzzle puzzle = Puzzle.fromJson(responseJson['getPuzzle']);
+
+    if (kDebugMode) {
+      print("returning puzzle");
+    }
+   return puzzle;
+
+  }
+
 
   Future<void> getConversationOptions(String conversationId) async {
     loading = true;
@@ -63,7 +118,6 @@ class GameplayRepository extends ChangeNotifier {
       id
       nextConversationId
       nextStepType
-      optionId
       optionText
       puzzleId
       relicId
@@ -106,16 +160,18 @@ class GameplayRepository extends ChangeNotifier {
   }
 
 
-  Future<void> sendOption(String conversationId, String gameState,
-      String nextStepType, String optionId) async {
+  Future<void> sendOption({ required String conversationId, required String gameState,
+      required String nextStepType, String? optionId,String? puzzleId}) async {
     try {
       String graphQLDocument = '''
-    mutation sendOption(\$conversationId:String!,\$gameState:GAMESTATE!,\$nextStepType:String!,\$optionId:String!) {
+    mutation sendOption(\$conversationId:String!,\$gameState:GAMESTATE!,\$nextStepType:String!,\$optionId:String!,
+    \$puzzleId:String) {
   sendOption(
     input: {
       gameState: \$gameState,
       nextStepType: \$nextStepType,
       conversationId: \$conversationId,
+      puzzleId:\$puzzleId,
       optionId: \$optionId
     }
   )
@@ -130,7 +186,9 @@ class GameplayRepository extends ChangeNotifier {
               "gameState": gameState,
               "nextStepType": nextStepType,
               "conversationId": conversationId,
-              "optionId": optionId
+              "optionId": optionId,
+              "puzzleId": puzzleId,
+
             },));
 
 
@@ -160,7 +218,7 @@ class GameplayRepository extends ChangeNotifier {
 
     try {
       String graphQLDocument = '''
-    mutation notifyConversationResponse(\$id:String!, \$conversationType:CONVERSATIONTYPE!,\$characterId:String, \$chapterId:String,
+    mutation notifyConversationResponse(\$id:String!, \$conversationType:CONVERSATIONTYPE!,\$characterId:String!, \$chapterId:String!,
      \$imageUrl: String,\$hasOptions:Boolean!,\$firstConversation:Boolean!, \$message:String,\$puzzleId:String,
         \$relicId:String
     ) {
@@ -202,7 +260,9 @@ class GameplayRepository extends ChangeNotifier {
               "conversationType":convoType,
               "hasOptions":true,
               "firstConversation":false,
-              "message": message
+              "message": message,
+              "characterId":"character",
+              "chapterId":"chapterId"
 
             },));
 

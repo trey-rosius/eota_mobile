@@ -71,7 +71,7 @@ class Character {
   List<Conversation>? get conversation {
     return _conversation;
   }
-  
+
   CHARACTER_ROLE get role {
     try {
       return _role!;
