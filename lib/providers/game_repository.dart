@@ -212,9 +212,11 @@ query getPuzzle(\$puzzleId: String!)  {
 
   Future<void> notifyConversationResponse(String id,String convoType,String message) async {
 
-    print("id is $id");
-    print("convo type is $convoType");
-    print("message is $message");
+    if (kDebugMode) {
+      print("id is $id");
+
+
+    }
 
     try {
       String graphQLDocument = '''
