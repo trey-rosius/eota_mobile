@@ -56,7 +56,7 @@ export 'Relics.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "0693d0a42b12a263cba4347a074a1921";
+  String version = "cbb1591f875bc71aab8cd22c71151634";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [];
   @override

@@ -161,10 +161,10 @@ query getPuzzle(\$puzzleId: String!)  {
 
 
   Future<void> sendOption({ required String conversationId, required String gameState,
-      required String nextStepType, String? optionId,String? puzzleId}) async {
+      required String nextStepType, String? optionId, String? puzzleId}) async {
     try {
       String graphQLDocument = '''
-    mutation sendOption(\$conversationId:String!,\$gameState:GAMESTATE!,\$nextStepType:String!,\$optionId:String!,
+    mutation sendOption(\$conversationId:String,\$gameState:GAMESTATE!,\$nextStepType:String!,\$optionId:String,
     \$puzzleId:String) {
   sendOption(
     input: {

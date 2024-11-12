@@ -146,7 +146,16 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         actions: [
           TextButton(
-              onPressed: () => gameRepo.sendOption(
+              onPressed: () =>
+        gameRepo.sendOption(
+        conversationId: "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
+        gameState:  "CONTINUE",
+        nextStepType: "PUZZLE",
+        puzzleId:"2f304d24-c485-4f8d-983b-e570f862429f"
+
+    ),
+                  /*
+                  gameRepo.sendOption(
                   conversationId: "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
                  gameState:  "NEW",
                   nextStepType: "CONVERSATION",
@@ -154,6 +163,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   puzzleId:""
 
               ),
+
+                   */
               child: Text("Start Game"))
         ],
         title: Text(
@@ -237,7 +248,7 @@ class _OptionWidgetState extends State<OptionWidget> {
         Future.delayed(Duration(seconds: 2)).then((_) async {
 
           gameRepo.sendOption(conversationId:widget.option.nextConversationId, gameState: "CONTINUE",
-              nextStepType: widget.option.nextStepType.name,optionId: widget.option.id);
+              nextStepType: widget.option.nextStepType.name,optionId: widget.option.id,);
         });
 
 
