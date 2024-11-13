@@ -3,11 +3,7 @@ import 'dart:convert';
 import 'package:eota/models/ConversationResponse.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-
 import '../models/Option.dart';
 import '../models/Options.dart';
 import '../models/Puzzle.dart';
@@ -20,6 +16,15 @@ class GameplayRepository extends ChangeNotifier {
 
   List<Option> _options = [];
 
+  bool _activateTextfield = false;
+
+
+  bool get activateTextfield => _activateTextfield;
+
+  set activateTextfield(bool value) {
+    _activateTextfield = value;
+    notifyListeners();
+  }
 
   List<Option> get options => _options;
 

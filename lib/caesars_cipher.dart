@@ -1,142 +1,190 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-
-class CaesarCipherHomePage extends StatefulWidget {
+class CaesarWheel extends StatefulWidget {
   @override
-  _CaesarCipherHomePageState createState() => _CaesarCipherHomePageState();
+  _CaesarWheelState createState() => _CaesarWheelState();
 }
 
-class _CaesarCipherHomePageState extends State<CaesarCipherHomePage> {
-  String _hintMessage = '';
-  String _encryptedMessage = '';
-  String _feedbackMessage = '';
-  int _shift = Random().nextInt(25) + 1; // Random shift from 1 to 25
-  List<String> _characters = [];
+class _CaesarWheelState extends State<CaesarWheel> {
+  double innerWheelAngle = 0.0;
+  int shiftCount = 0;
+  final List<String> letters = List.generate(26, (index) => String.fromCharCode(65 + index)); // A-Z
+  final double sectionAngle = (2 * pi) / 26;
 
-  String _encryptMessage(String message, int shift) {
-    return message.split('').map((char) {
-      if (char.contains(RegExp(r'[a-zA-Z]'))) {
-        int firstAscii = char.toUpperCase() == char ? 65 : 97;
-        return String.fromCharCode((char.codeUnitAt(0) - firstAscii + shift) % 26 + firstAscii);
-      } else {
-        return char;
-      }
-    }).join();
+  void _onPanEnd(DragEndDetails details) {
+    setState(() {
+      // Snap to nearest section
+      final snappedAngle = (innerWheelAngle / sectionAngle).round() * sectionAngle;
+      shiftCount = (snappedAngle / sectionAngle).round();
+      innerWheelAngle = snappedAngle;
+    });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _hintMessage = 'Hint: This is a Caesar Cipher with a shift of $_shift.';
-    _encryptedMessage = _encryptMessage('HELLO FLUTTER', _shift);
-    _characters = _encryptedMessage.split('');
+  void _onPanUpdate(DragUpdateDetails details) {
+    setState(() {
+      innerWheelAngle += details.delta.dx * 0.005;  // Smoother increment
+      shiftCount = (innerWheelAngle / sectionAngle).round();
+    });
   }
 
-  void _checkAnswer() {
-    String userAnswer = _characters.join().toUpperCase();
-    print("user answer is $userAnswer");
-    String correctAnswer = _encryptMessage('HELLO FLUTTER', _shift).toUpperCase();
+  void _increaseShift() {
+    setState(() {
+      shiftCount += 1;
+      innerWheelAngle = shiftCount * sectionAngle;
+    });
+  }
 
-    print("correct answer is $correctAnswer");
-
-    if (userAnswer == correctAnswer) {
-      setState(() {
-        _feedbackMessage = 'Correct! Great job!';
-      });
-    } else {
-      setState(() {
-        _feedbackMessage = 'Incorrect. Try again!';
-      });
-    }
+  void _decreaseShift() {
+    setState(() {
+      shiftCount -= 1;
+      innerWheelAngle = shiftCount * sectionAngle;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Caesar Cipher Puzzle Game'),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onPanUpdate: _onPanUpdate,
+            onPanEnd: _onPanEnd,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Outer wheel
+                CustomPaint(
+                  size: Size(500, 500),
+                  painter: WheelPainter(
+                    letters: letters,
+                    fillColor: Colors.white,
+                    radiusScale: 0.95,
+                    innerCircleRadiusScale: 0.6,
+                  ),
+                ),
+                // Inner wheel (rotatable)
+                Transform.rotate(
+                  angle: innerWheelAngle,
+                  child: CustomPaint(
+                    size: Size(380, 380),
+                    painter: WheelPainter(
+                      letters: letters,
+                      fillColor: Colors.white,
+                      radiusScale: 0.85,
+                      innerCircleRadiusScale: 0.6,
+                    ),
+                  ),
+                ),
+                // Arrow Indicator
+                Positioned(
+                  top: 190,
+                  child: Icon(
+                    Icons.arrow_drop_up,
+                    size: 45,
+                    color: Colors.black,
+                  ),
+                ),
+                // Shift Count Display
+                Center(
+                  child: Text(
+                    'Shift: $shiftCount',
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold,color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _decreaseShift,
+                child: Text('- Shift'),
+              ),
+              SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: _increaseShift,
+                child: Text('+ Shift'),
+              ),
+            ],
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-          Text(
-          _hintMessage,
-          style: TextStyle(fontSize: 18, color: Colors.lightBlueAccent),
-        ),
-        SizedBox(height: 20),
-       Column(
-         crossAxisAlignment: CrossAxisAlignment.stretch,
-         children: [
-           Text(
-             'Encrypted Message:',
-             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-           ),
-           SizedBox(height: 10),
-           Wrap(
-             alignment: WrapAlignment.center,
-             spacing: 8.0,
-             children: List.generate(_characters.length, (index) {
-               return Draggable<String>(
-                 data: _characters[index],
-                 child: DragTarget<String>(
-                   onAccept: (data) {
-                     setState(() {
-                       int oldIndex = _characters.indexOf(data);
-                       _characters.removeAt(oldIndex);
-                       _characters.insert(index, data);
-                     });
-                   },
-                   builder: (context, candidateData, rejectedData) {
-                     return _buildCharacterTile(_characters[index]);
-                   },
-                 ),
-                 feedback: _buildCharacterTile(_characters[index], isDragging: true),
-                 childWhenDragging: _buildCharacterTile('', isDragging: true),
-               );
-             }),
-           ),
-           SizedBox(height: 20),
-           ElevatedButton(
-             onPressed: _checkAnswer,
-             child: Text('Submit Answer'),
-           ),
-           SizedBox(height: 20),
-           ElevatedButton(
-             onPressed: () {
-               setState(() {
-                 _characters = 'HELLO FLUTTER'.split('');
-               });
-             },
-             child: Text('Reveal Answer'),
-           ),
-           SizedBox(height: 20),
-           Text(
-             _feedbackMessage,
-             style: TextStyle(fontSize: 22, color: Colors.orangeAccent),
-           ),
-         ],
-       )
-          ]
-      ),
-    ),
     );
   }
+}
 
-  Widget _buildCharacterTile(String character, {bool isDragging = false}) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDragging ? Colors.blueAccent.withOpacity(0.5) : Colors.blueAccent,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Text(
-        character,
-        style: TextStyle(fontSize: 24, color: Colors.white),
-      ),
+class WheelPainter extends CustomPainter {
+  final List<String> letters;
+  final Color fillColor;
+  final double radiusScale;
+  final double innerCircleRadiusScale;
+
+  WheelPainter({
+    required this.letters,
+    required this.fillColor,
+    this.radiusScale = 0.9,
+    this.innerCircleRadiusScale = 0.6,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0
+      ..color = Colors.blue;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2 * radiusScale;
+    final innerCircleRadius = radius * innerCircleRadiusScale;
+
+    // Draw the wheel background
+    paint.style = PaintingStyle.fill;
+    paint.color = fillColor;
+    canvas.drawCircle(center, radius, paint);
+
+    paint.color = Colors.black;
+    paint.style = PaintingStyle.stroke;
+    canvas.drawCircle(center, radius, paint);
+
+    // Divide circle into sections
+    final sectionAngle = 2 * pi / letters.length;
+    final textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
     );
+
+    for (int i = 0; i < letters.length; i++) {
+      final angle = i * sectionAngle;
+
+      // Calculate positions for letters with padding
+      final textRadius = radius * 0.85;
+      final x = center.dx + textRadius * cos(angle + sectionAngle / 2);
+      final y = center.dy + textRadius * sin(angle + sectionAngle / 2);
+
+      // Draw text for each letter
+      textPainter.text = TextSpan(
+        text: letters[i],
+        style: TextStyle(fontSize: 18, color: Colors.black),
+      );
+      textPainter.layout();
+      textPainter.paint(
+          canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
+
+      // Draw radial lines from inner circle radius to the outer edge
+      final startX = center.dx + innerCircleRadius * cos(angle);
+      final startY = center.dy + innerCircleRadius * sin(angle);
+      final endX = center.dx + radius * cos(angle);
+      final endY = center.dy + radius * sin(angle);
+      canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }

@@ -10,6 +10,7 @@ import 'amplifyconfiguration.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:provider/provider.dart';
 
+import 'caesars_cipher.dart';
 import 'chat_screen.dart';
 import 'home_screen.dart';
 import 'message_repository.dart';
@@ -96,7 +97,8 @@ class _MyAppState extends State<App> {
             _isConfigured
                 ?  ChangeNotifierProvider(create: (context) => MessageRepository.instance(),
              // child: ChatScreen(),
-              child: HomeScreen(),
+              //child: HomeScreen(),
+              child: CaesarWheel(),
             )
 
 

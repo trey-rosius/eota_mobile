@@ -33,7 +33,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController textEditingController = TextEditingController();
   late final Stream<GraphQLResponse<String>> onNotifyConversationResponseStream;
   Future<void> subscribeToOnNotifyStateResponse(
       GameplayRepository gameRepo) async {
@@ -67,7 +68,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       await for (var event in onNotifyConversationResponseStream) {
-        print("notify Conversation stream $event");
+        if (kDebugMode) {
+          print("notify Conversation stream $event");
+        }
         Map jsonComment = json.decode(event.data!);
         ConversationResponse conversationResponse =
             ConversationResponse.fromJson(
@@ -80,7 +83,9 @@ class _ChatScreenState extends State<ChatScreen> {
         if (gameRepo.conversationResponses.isNotEmpty) {
           if (gameRepo.conversationResponses[0].id != conversationResponse.id) {
             gameRepo.conversationResponse = conversationResponse;
-            print("conversation response message ${conversationResponse.message}");
+            if (kDebugMode) {
+              print("conversation response message ${conversationResponse.message}");
+            }
             SchedulerBinding.instance.addPostFrameCallback((_) {
               _scrollController.animateTo(
                 _scrollController.position.maxScrollExtent,
@@ -91,7 +96,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
           }
         } else {
-          print("conversation response message 2 ${conversationResponse.message}");
+          if (kDebugMode) {
+            print("conversation response message 2 ${conversationResponse.message}");
+          }
           SchedulerBinding.instance.addPostFrameCallback((_) {
             _scrollController.animateTo(
               _scrollController.position.maxScrollExtent,
@@ -102,8 +109,14 @@ class _ChatScreenState extends State<ChatScreen> {
           gameRepo.conversationResponse = conversationResponse;
         }
         if(conversationResponse.hasOptions!){
+          gameRepo.activateTextfield =false;
           gameRepo.getConversationOptions(conversationResponse.id);
         }
+        if(conversationResponse.conversationType.name =="PUZZLE"){
+          //activate textfield
+          gameRepo.activateTextfield =true;
+        }
+
 
         if (kDebugMode) {
           //  print("all list messages are $chatMessagesList");
@@ -127,6 +140,84 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
+  Widget buildInput( GameplayRepository gameRepo) {
+
+    return  Container(
+      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+      child: Row(
+        children: <Widget>[
+          // Button send image
+          Container(
+            margin: const EdgeInsets.only(left: 10.0),
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle),
+            child: IconButton(
+              icon: const Icon(Icons.camera_alt),
+              //  onPressed: ()=>getImageFromCamera(chatRepo),
+              onPressed: () => {},
+              color: Colors.white,
+            ),
+          ),
+
+          // Edit text
+          Flexible(
+            child: Container(
+              // margin: EdgeInsets.symmetric(horizontal: 10.0,vertical: 15.0),
+              //  padding: EdgeInsets.symmetric(vertical: 10.0),
+
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  reverse: true,
+                  child: Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+                      maxLines: null,
+                      onChanged: (String text) {
+                        if (text.trim().isNotEmpty) {
+                          //send
+                        } else {
+                          //send
+                        }
+                      },
+
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 15.0),
+                      controller: textEditingController,
+                      decoration: const InputDecoration(
+                        hintText: 'start typing or paste something',
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Button send message
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle),
+            child: Center(
+              child: IconButton(
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: ()
+                {
+
+                },
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     onNotifyConversationResponseStream.drain();
@@ -135,7 +226,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-   // MessageRepository messageRepo = context.watch<MessageRepository>();
+
     Size size = MediaQuery.of(context).size;
     var gameRepo = context.watch<GameplayRepository>();
     return Scaffold(
@@ -151,6 +242,7 @@ class _ChatScreenState extends State<ChatScreen> {
         conversationId: "e5c47224-c25c-4270-8dcf-8f3d152b5e0c",
         gameState:  "CONTINUE",
         nextStepType: "PUZZLE",
+       // nextStepType: "CONVERSATION",
         puzzleId:"2f304d24-c485-4f8d-983b-e570f862429f"
 
     ),
@@ -188,26 +280,29 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         child: Column(
           children: [
-           Container(
+           Expanded(
+             child: Container(
 
-                height: size.height/1.6,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: gameRepo.conversationResponses.length,
-                  itemBuilder: (context, index) {
-                    return  gameRepo.conversationResponses[index].conversationType.name =="CONVERSATION"?
-                    MessageBubble(
-                      conversationResponse: gameRepo.conversationResponses[index],
+                 height: size.height/1.6,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: gameRepo.conversationResponses.length,
+                    itemBuilder: (context, index) {
+                      return  gameRepo.conversationResponses[index].conversationType.name =="CONVERSATION"?
+                      MessageBubble(
+                        conversationResponse: gameRepo.conversationResponses[index],
 
-                    ):
-                    gameRepo.conversationResponses[index].conversationType.name =="PUZZLE" ?
-                    PuzzleWidget(conversationResponse: gameRepo.conversationResponses[index]) :
+                      ):
+                      gameRepo.conversationResponses[index].conversationType.name =="PUZZLE" ?
+                      PuzzleWidget(conversationResponse: gameRepo.conversationResponses[index]) :
 
-                    GeneratedImage(conversationResponse: gameRepo.conversationResponses[index]);
-                  },
+                      GeneratedImage(conversationResponse: gameRepo.conversationResponses[index]);
+                    },
+                  ),
                 ),
-              ),
+           ),
 
+          gameRepo.activateTextfield ? buildInput(gameRepo):SizedBox(),
            gameRepo.options.isEmpty ? SizedBox(): Container(
              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
              child: Wrap(
